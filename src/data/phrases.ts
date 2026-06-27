@@ -1,0 +1,17 @@
+export const phrases: string[] = [
+  "[wired to me]",
+  "[私を接続して]",
+  "[made in the Wired]",
+  "[present day, present time]",
+  "[let me be your noise]",
+  "[love me in the Wired]",
+  "[do you hear the noise]",
+  "[do you see the knight]",
+  "[cyberia is open]",
+  "[psycho frame, I am here]",
+  "[the noise in God]",
+  "[your knight is here]",
+  "[I am the Wired]",
+  "[let us love Lain]",
+  "[make me sad]",
+];

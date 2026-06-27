@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0a0a0a;
+  --color-bg-alt: #1a1a1a;
+  --color-text: #d0d0d0;
+  --color-text-dim: #8a8a8a;
+  --color-text-mute: #4a4a4a;
+  --color-accent: #00ff88;
+  --color-accent-2: #ff0080;
+  --color-accent-3: #00ddff;
+  --color-link: #88aaff;
+  --color-link-visited: #aa88ff;
+  --color-brackets: #ffaa00;
+  --color-hr: #4a4a4a;
+  --font-mono: "Courier New", "Lucida Console", monospace;
+  --font-serif: "Times New Roman", serif;
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+html {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  scroll-behavior: smooth;
+  image-rendering: pixelated;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes bracketBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+.bracket-blink { animation: bracketBlink 1.5s steps(2) infinite; }
+.bracket-blink-delay { animation: bracketBlink 1.5s steps(2) infinite; animation-delay: 0.3s; }
+
+@keyframes wiredFade {
+  0% { opacity: 0; filter: blur(8px); letter-spacing: 0.5em; }
+  50% { opacity: 0.7; filter: blur(2px); letter-spacing: 0.2em; }
+  100% { opacity: 1; filter: blur(0); letter-spacing: normal; }
+}
+.wired-anim { animation: wiredFade 2s ease-out forwards; }
+.wdel1s { animation: wiredFade 0.5s ease-out 0.3s both; }
+.wdel2s { animation: wiredFade 0.5s ease-out 0.6s both; }
+.wdel3s { animation: wiredFade 0.5s ease-out 0.9s both; }
+.del1s { animation: wiredFade 0.5s ease-out 1s both; }
+.del1s5ms { animation: wiredFade 0.5s ease-out 1.05s both; }
+.del2s { animation: wiredFade 0.5s ease-out 1.2s both; }
+.del4s { animation: wiredFade 0.5s ease-out 1.4s both; }
+.del5s { animation: wiredFade 0.5s ease-out 1.5s both; }
+.del6s { animation: wiredFade 0.5s ease-out 1.6s both; }
+
+.phrase-cycle { display: inline-block; min-width: 200px; text-align: center; }
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); text-shadow: none; }
+  20% { transform: translate(-1px, 0); text-shadow: 1px 0 0 #ff0080, -1px 0 0 #00ddff; }
+  40% { transform: translate(1px, 0); text-shadow: -1px 0 0 #ff0080, 1px 0 0 #00ddff; }
+  60% { transform: translate(0, 1px); }
+  80% { transform: translate(0, -1px); }
+}
+.glitch-text { animation: glitch 4s steps(1) infinite; }
+
+@keyframes staticNoise {
+  0% { background-position: 0 0; }
+  100% { background-position: 200px 200px; }
+}
+.static-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 50;
+  opacity: 0; transition: opacity 0.5s;
+  background-image:
+    repeating-linear-gradient(0deg, currentColor 0px, currentColor 1px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, currentColor 0px, currentColor 1px, transparent 1px, transparent 2px);
+  background-size: 4px 4px;
+  animation: staticNoise 0.2s linear infinite;
+}
+.static-overlay.active { opacity: 1; }
+
+.icon-a, .icon-b {
+  width: 32px; height: 32px; margin-bottom: 8px;
+  background: var(--color-accent) center / contain no-repeat url("/2/mebious_icon_02.gif");
+  image-rendering: pixelated;
+}
+.icon-b { background-color: var(--color-accent-2); }
+
+a { color: var(--color-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:visited { color: var(--color-link-visited); }
+
+hr { border: none; border-top: 1px solid var(--color-hr); margin: 8px 0; }
+
+::selection { background: var(--color-accent-2); color: white; }
+
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--color-bg-alt); }
+::-webkit-scrollbar-thumb { background: var(--color-text-mute); border: 2px solid var(--color-bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-dim); }
+
+*:focus-visible { outline: 1px dashed var(--color-accent); outline-offset: 2px; }
+
+@media screen and (max-width: 800px) {
+  html { font-size: 14px; }
+  body { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
