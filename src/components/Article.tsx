@@ -1,7 +1,11 @@
-import type { ContentBlock, Article as ArticleType } from "../data/articles";
+import { Card } from "./Card";
+import { SectionHeader } from "./SectionHeader";
+import { GifDisplay } from "./GifDisplay";
+import { articles } from "../data/articles";
+import type { ContentBlock } from "../data/articles";
 
 interface ArticleProps {
-  article: ArticleType;
+  article: typeof articles[number];
 }
 
 export function Article({ article }: ArticleProps) {
@@ -9,52 +13,56 @@ export function Article({ article }: ArticleProps) {
     switch (block.type) {
       case "text":
         return (
-          <p key={idx} style={{ margin: "8px 0" }}>
+          <p key={idx} className="font-mono text-base text-text leading-relaxed my-3">
             {block.value}
           </p>
         );
       case "gif":
         return (
-          <img
+          <GifDisplay
             key={idx}
             src={block.src}
-            alt={block.alt || ""}
-            className={block.className || ""}
-            style={{
-              maxWidth: "100%",
-              height: "auto",
-              imageRendering: "pixelated",
-              margin: "16px auto",
-              display: "block",
-            }}
+            alt={block.alt}
+            size="md"
           />
         );
       case "heading":
         return (
-          <h2 key={idx} style={{ fontSize: "20px", margin: "24px 0 8px", color: "var(--color-text)" }}>
+          <h3
+            key={idx}
+            className="font-display text-xl text-lain mt-6 mb-3"
+          >
             {block.value}
-          </h2>
+          </h3>
         );
       case "list":
         return (
-          <div key={idx} style={{ margin: "8px 0" }}>
+          <div key={idx} className="my-3 space-y-1">
             {block.items.map((item, i) => (
-              <div key={i} style={{ margin: "2px 0", display: "flex" }}>
+              <div
+                key={i}
+                className="flex gap-3 font-mono text-base text-text"
+              >
                 {block.prefix && (
-                  <span style={{ color: "var(--color-accent)", marginRight: "8px", flexShrink: 0 }}>
+                  <span className="text-lain select-none flex-shrink-0 w-4">
                     {block.prefix}
                   </span>
                 )}
-                <span>{item}</span>
+                <span className="flex-1">{item}</span>
               </div>
             ))}
           </div>
         );
       case "link":
         return (
-          <p key={idx} style={{ margin: "8px 0" }}>
-            <a href={block.href} target="_blank" rel="noopener noreferrer">
-              {block.text}
+          <p key={idx} className="my-3">
+            <a
+              href={block.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan hover:text-lain underline underline-offset-4 decoration-cyan/30 hover:decoration-lain/60 transition-colors"
+            >
+              {block.text} →
             </a>
           </p>
         );
@@ -62,31 +70,21 @@ export function Article({ article }: ArticleProps) {
         return (
           <blockquote
             key={idx}
-            style={{
-              margin: "12px 0",
-              paddingLeft: "16px",
-              borderLeft: "2px solid var(--color-accent)",
-              color: "var(--color-text-dim)",
-              fontStyle: "italic",
-            }}
+            className="my-4 pl-4 border-l-2 border-lain/40 text-dim font-mono italic"
           >
             {block.value}
-            {block.source && <div style={{ marginTop: "4px", fontSize: "10px" }}>— {block.source}</div>}
+            {block.source && (
+              <div className="text-xs text-mute mt-1 not-italic">
+                — {block.source}
+              </div>
+            )}
           </blockquote>
         );
-      case "br":
-        return <br key={idx} />;
       case "ascii":
         return (
           <pre
             key={idx}
-            style={{
-              fontSize: "10px",
-              lineHeight: 1.2,
-              color: "var(--color-accent)",
-              overflow: "auto",
-              margin: "8px 0",
-            }}
+            className="font-code text-xs text-lain my-4 overflow-x-auto leading-tight"
           >
             {block.value}
           </pre>
@@ -97,39 +95,22 @@ export function Article({ article }: ArticleProps) {
   };
 
   return (
-    <div
-      className="article"
-      style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        padding: "16px",
-        borderTop: "1px solid var(--color-hr)",
-      }}
+    <Card
+      id={article.id}
+      accent={article.iconType === "B" ? "pink" : "lain"}
+      className="max-w-2xl mx-auto my-12 scroll-mt-20"
     >
-      <div className={`icon-${article.iconType.toLowerCase()}`} />
-      <h1
-        style={{
-          fontSize: "24px",
-          fontFamily: "var(--font-serif)",
-          margin: "8px 0",
-          color: "var(--color-text)",
-        }}
-      >
-        {article.title}
-      </h1>
-      <h5 className="author" style={{ fontSize: "12px", color: "var(--color-text-dim)", margin: "4px 0" }}>
-        {article.author}
-      </h5>
-      <h5 className="date" style={{ fontSize: "12px", color: "var(--color-text-dim)", margin: "4px 0" }}>
-        {article.date}
-      </h5>
-      <br />
-      <hr />
-      <br />
-      <br />
-      {article.content.map((block, idx) => renderBlock(block, idx))}
-      <br />
-      <br />
-    </div>
+      <SectionHeader
+        id={article.id}
+        title={article.title}
+        icon={article.iconType === "B" ? "/2/mebious_icon_02.gif" : undefined}
+        author={article.author}
+        date={article.date}
+      />
+
+      <div className="section-ascii">────────────────</div>
+
+      <div className="mt-4">{article.content.map((block, idx) => renderBlock(block, idx))}</div>
+    </Card>
   );
 }
