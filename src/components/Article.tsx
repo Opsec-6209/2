@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from "react";
 import { Card } from "./Card";
 import { SectionHeader } from "./SectionHeader";
+import { TextScramble } from "./TextScramble";
 import { GifDisplay } from "./GifDisplay";
 import { articles } from "../data/articles";
 import type { ContentBlock } from "../data/articles";
@@ -9,6 +11,24 @@ interface ArticleProps {
 }
 
 export function Article({ article }: ArticleProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
   const renderBlock = (block: ContentBlock, idx: number) => {
     switch (block.type) {
       case "text":
@@ -28,11 +48,8 @@ export function Article({ article }: ArticleProps) {
         );
       case "heading":
         return (
-          <h3
-            key={idx}
-            className="font-display text-xl text-lain mt-6 mb-3"
-          >
-            {block.value}
+          <h3 key={idx} className="font-display text-xl text-lain mt-6 mb-3">
+            <TextScramble text={block.value} />
           </h3>
         );
       case "list":
@@ -73,11 +90,6 @@ export function Article({ article }: ArticleProps) {
             className="my-4 pl-4 border-l-2 border-lain/40 text-dim font-mono italic"
           >
             {block.value}
-            {block.source && (
-              <div className="text-xs text-mute mt-1 not-italic">
-                — {block.source}
-              </div>
-            )}
           </blockquote>
         );
       case "ascii":
@@ -95,22 +107,28 @@ export function Article({ article }: ArticleProps) {
   };
 
   return (
-    <Card
-      id={article.id}
-      accent={article.iconType === "B" ? "pink" : "lain"}
-      className="max-w-2xl mx-auto my-12 scroll-mt-20"
+    <div
+      ref={ref}
+      className={`my-12 max-w-2xl mx-auto ${visible ? "reveal-section" : "opacity-0"}`}
     >
-      <SectionHeader
+      <Card
         id={article.id}
-        title={article.title}
-        icon={article.iconType === "B" ? "/2/mebious_icon_02.gif" : undefined}
-        author={article.author}
-        date={article.date}
-      />
-
-      <div className="section-ascii">────────────────</div>
-
-      <div className="mt-4">{article.content.map((block, idx) => renderBlock(block, idx))}</div>
-    </Card>
+        accent={article.iconType === "B" ? "pink" : "lain"}
+      >
+        <SectionHeader
+          id={article.id}
+          title={article.title}
+          icon={
+            article.iconType === "B" ? "/2/mebious_icon_02.gif" : undefined
+          }
+          author={article.author}
+          date={article.date}
+        />
+        <div className="section-ascii">────────────────</div>
+        <div className="mt-4">
+          {article.content.map((block, idx) => renderBlock(block, idx))}
+        </div>
+      </Card>
+    </div>
   );
 }
