@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Menu } from "lucide-react";
 import { Sidebar } from "./components/Sidebar";
 import { Hero } from "./components/Hero";
@@ -472,5 +472,3 @@ export default function App() {
     </div>
   );
 }
-
-import { useMemo } from "react";

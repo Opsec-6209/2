@@ -27,10 +27,10 @@ export function useBoot() {
       return false;
     }
   });
-  const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState<"bios" | "connecting" | "done">(
-    booted ? "done" : "bios"
+  const [bootLines, setBootLines] = useState<string[]>(
+    booted ? BOOT_SEQUENCE.map((l) => l.text) : []
   );
+  const [progress, setProgress] = useState(0);
   const [showContent, setShowContent] = useState(booted);
 
   useEffect(() => {
@@ -40,11 +40,13 @@ export function useBoot() {
     }
 
     setPhase("bios");
+    setBootLines([]);
+    setProgress(0);
+
     let i = 0;
     const tick = () => {
       if (i >= BOOT_SEQUENCE.length) {
         setPhase("connecting");
-        setProgress(0);
         let p = 0;
         const startTime = Date.now();
         const dur = 1500;
@@ -59,25 +61,27 @@ export function useBoot() {
             try {
               localStorage.setItem(STORAGE_KEY, "1");
             } catch {}
-            setTimeout(() => setShowContent(true), 300);
-            setTimeout(() => setBooted(true), 600);
+            setTimeout(() => {
+              setShowContent(true);
+              setBooted(true);
+            }, 400);
           }
         };
         requestAnimationFrame(progressTick);
         return;
       }
-      const line = BOOT_SEQUENCE[i];
-      setBootLines((prev) => [...prev, line]);
+      setBootLines((prev) => [...prev, BOOT_SEQUENCE[i].text]);
       i++;
-      setTimeout(tick, line.delay);
+      setTimeout(tick, BOOT_SEQUENCE[i - 1].delay);
     };
-    setBootLines([]);
-    setTimeout(tick, 200);
+    const start = setTimeout(tick, 200);
+
+    return () => clearTimeout(start);
   }, [booted]);
 
-  const [bootLines, setBootLines] = useState<
-    { text: string; delay: number }[]
-  >(booted ? BOOT_SEQUENCE : []);
+  const [phase, setPhase] = useState<"bios" | "connecting" | "done">(
+    booted ? "done" : "bios"
+  );
 
   return { booted, showContent, phase, progress, bootLines };
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const CHARS = "!<>-_\\/[]{}—=+*^?#01アイウエオカキクケコサシスセソタチツテト";
 
@@ -49,8 +49,4 @@ export function useTextScramble(target: string, duration = 800) {
   }, []);
 
   return { text, scramble, isAnimating };
-}
-
-function useCallback<T extends (...args: any[]) => any>(fn: T, _deps: any[]): T {
-  return useState(() => fn)[0] as any;
 }
