@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState, useEffect } from "react";
 import { useMultilang } from "../hooks/useMultilang";
 import { TextScramble } from "./TextScramble";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { ChevronDown } from "lucide-react";
 
 const Hero3D = lazy(() => import("./Hero3D").then((m) => ({ default: m.Hero3D })));
@@ -28,9 +29,11 @@ export function Hero({ onEnter }: HeroProps) {
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {supports3D && (
-        <Suspense fallback={null}>
-          <Hero3D />
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            <Hero3D />
+          </Suspense>
+        </ErrorBoundary>
       )}
 
       <div
